@@ -575,7 +575,6 @@ $("btnShare").addEventListener("click",()=>{
 });
 
 
-$("btnVer").addEventListener("click",()=>{if(pdfBlob)window.open(URL.createObjectURL(pdfBlob),"_blank");});
 
 
 function resumen(){const pv=puntajePV(),bk=puntajeBK();return `*Reporte de Inspección de Carnes*\nTienda: ${tiendaNombre()}\nFecha: ${$("fecha").value}\nPunto de venta: ${pv}/100 (${nivel(pv).t})\nBack: ${bk}/100 (${nivel(bk).t})\nAdministrador: ${$("admin").value.trim()}\nAuditor: ${$("auditor").value.trim()}`}

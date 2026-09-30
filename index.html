@@ -297,7 +297,7 @@ const $=id=>document.getElementById(id);
 
 /* Fecha y hora */
 const now=new Date();
-$("fecha").value=now.toISOString().slice(0,10);
+$("fecha").value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
 $("hora").value=now.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
 const REGIONALES={"Atlantico": ["201 · UNICO", "202 · CALLE 30", "203 · SOLEDAD", "204 · ALKARAWI", "205 · BOSTON", "206 · SANTO TOMAS", "207 · NUESTRO ATLANTICO", "210 · VILLA CAMPESTRE"], "Bolivar": ["101 · PRADO", "102 · BAZURTO", "103 · SAN FERNANDO", "104 · OLAYA", "105 · TURBACO", "106 · SOCORRO", "107 · LA MARIA", "108 · CABRERO", "109 · AVENIDA PEDRO DE HEREDIA", "110 · TERMINAL DE TRANSPORTE", "111 · BOCAGRANDE", "113 · TURBACO 2(LA POPA)", "114 · ARJONA (LA POPA)", "116 · TORICES", "117 · CAMPESTRE", "118 · SAN JOSE DE LOS CAMPANOS", "121 · AEROPUERTO"], "Santa Marta": ["401 · MERCADO", "402 · RODADERO", "403 · TRANSPORTE", "404 · SANTA CRUZ", "405 · BAVARIA", "406 · CIENAGA"]};
 const norm=t=>(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().trim();

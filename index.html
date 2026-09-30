@@ -180,6 +180,20 @@ input[type=text],input[type=tel],input[type=date],select,textarea{padding:9px 10
 .rp-head{position:relative}
 .rp-logo{position:absolute;top:10px;right:10px;height:40px;background:#fff;border-radius:6px;padding:2px 5px}
 .rp-head h3{padding-right:78px}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;align-items:end}
+.score .sc2 .lab{font-size:12px;opacity:.8;text-transform:uppercase;letter-spacing:.4px}
+.score .sc2 .num{font-size:30px;min-width:0;line-height:1}
+.score .sc2 .num small{font-size:14px;opacity:.6}
+.score .sc2 .track{height:7px;background:#3a4a66;border-radius:4px;overflow:hidden;margin-top:4px}
+.score .lbl{grid-column:1/-1;font-size:12px;opacity:.85}
+.rp-dos{display:grid;grid-template-columns:1fr 1fr;border-radius:0 0 10px 10px;overflow:hidden}
+.rp-dos .rp-score{border-radius:0;flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px}
+.rp-dos .rp-score .big{font-size:40px}
+.rp-dos .rp-score .lab{font-size:12px;text-transform:uppercase;letter-spacing:.4px;opacity:.9}
+.rp-dos .rp-score .txt{font-size:13px}
+.rp-sec{margin:12px 0 0;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:15px;color:var(--azul);border-bottom:2px solid var(--rojo);padding-bottom:3px}
+.hrow .sc{font-size:18px;line-height:1.15;padding:5px 4px;min-width:62px}
+.hrow .sc small{display:block;font-size:10px;font-family:Barlow,sans-serif;font-weight:600;opacity:.9}
 </style>
 </head>
 <body>
@@ -195,9 +209,10 @@ input[type=text],input[type=tel],input[type=date],select,textarea{padding:9px 10
 </header>
 
 <div class="score" aria-live="polite">
-  <div class="light" id="light"></div>
-  <div class="num cond"><span id="pts">0</span><small>/100</small></div>
-  <div class="bar"><div class="track"><div class="fill" id="fill"></div></div><div class="lbl" id="lbl">Sin evaluar · 0 de 10 puntos revisados</div></div>
+  <div class="sc2"><div class="lab">Punto de venta</div><div class="num cond"><span id="ptsPV">0</span><small>/100</small></div><div class="track"><div class="fill" id="fillPV"></div></div></div>
+  <div class="sc2"><div class="lab">Back</div><div class="num cond"><span id="ptsBK">0</span><small>/100</small></div><div class="track"><div class="fill" id="fillBK"></div></div></div>
+  <div class="lbl" id="lbl">0 de 9 puntos revisados</div>
+</div>
 </div>
 
 <main class="wrap">
@@ -280,17 +295,17 @@ input[type=text],input[type=tel],input[type=date],select,textarea{padding:9px 10
 <script>
 const LOGO=document.querySelector(".logoimg").src;
 const ITEMS=[
- {z:"Cara al cliente",t:"Exhibición de vitrinas y neveras autocontenidas",d:"Surtidas, ordenadas, limpias y atractivas para el autoservicio.",w:15},
- {z:"Cara al cliente",t:"Frescura y color de la carne",d:"Sin oxidación, tonos grises, exudado ni mal olor en exhibición.",w:15},
- {z:"Cara al cliente",t:"Etiquetado, precios y POP",d:"Precios visibles y correctos, etiquetas completas y señalización POP bien colocada.",w:12},
- {z:"Operación crítica",t:"Temperatura de vitrinas y neveras",d:"Equipos en rango y registro de temperatura al día.",w:10},
- {z:"Operación crítica",t:"Rotación de producto (PEPS)",d:"Primero en entrar, primero en salir, en exhibición y en cava.",w:10},
- {z:"Operación crítica",t:"Limpieza del área de trabajo",d:"Mesones, cuchillos, sierra, molino, pisos y drenajes limpios.",w:10},
- {z:"Control interno",t:"Fechas de vencimiento y trazabilidad",d:"Sin producto vencido; lotes y fechas identificables.",w:7},
- {z:"Control interno",t:"Presentación e higiene del personal",d:"Uniforme completo, cofia, tapabocas, guantes y sin accesorios.",w:7},
- {z:"Control interno",t:"Manejo de mermas y aprovechamiento",d:"Producto próximo a vencer identificado y con plan de salida.",w:7},
- {z:"Cava",t:"Orden, limpieza e inventario de la cava",d:"Cava ordenada, rotulada, sin producto en el piso y cortes clave surtidos.",w:7}
+ {sec:"pv",z:"Punto de venta · lo que ve el cliente",t:"Exhibición y surtido de vitrinas y neveras autocontenidas",d:"",w:25},
+ {sec:"pv",z:"Punto de venta · lo que ve el cliente",t:"Frescura y apariencia del producto",d:"",w:25},
+ {sec:"pv",z:"Punto de venta · lo que ve el cliente",t:"Precios, etiquetas, POP y dinámica del día señalizada y montada",d:"",w:20},
+ {sec:"pv",z:"Punto de venta · lo que ve el cliente",t:"Limpieza de la zona de venta y ausencia de malos olores",d:"",w:15},
+ {sec:"pv",z:"Punto de venta · lo que ve el cliente",t:"Uniforme y presentación del personal",d:"",w:15},
+ {sec:"back",z:"Back · lo interno",t:"Cava organizada, limpia, nada en el piso, cortes clave surtidos",d:"",w:30},
+ {sec:"back",z:"Back · lo interno",t:"Rotación PEPS, fechas de vencimiento y trazabilidad de lotes",d:"",w:25},
+ {sec:"back",z:"Back · lo interno",t:"Limpieza del área de proceso: mesones, cuchillos, sierra, molino y drenajes",d:"",w:25},
+ {sec:"back",z:"Back · lo interno",t:"Temperatura de cava, neveras y vitrinas en rango, con registro al día",d:"",w:20}
 ];
+{const c={pv:0,back:0};ITEMS.forEach(it=>it.n=++c[it.sec]);}
 const state=ITEMS.map(()=>({v:null,obs:"",foto:null}));
 let pdfBlob=null,pdfName="";
 const $=id=>document.getElementById(id);
@@ -317,9 +332,8 @@ let zonaPrev="",html="";
 ITEMS.forEach((it,i)=>{
   if(it.z!==zonaPrev){html+=`<div class="zona">${it.z}</div>`;zonaPrev=it.z}
   html+=`<div class="item" id="it${i}">
-   <div class="hd"><div class="n">${i+1}</div><div><div class="t">${it.t}</div><div class="d">${it.d}</div></div><div class="pts">${it.w} pts</div></div>
+   <div class="hd"><div class="n">${it.n}</div><div><div class="t">${it.t}</div>${it.d?`<div class="d">${it.d}</div>`:""}</div><div class="pts">${it.w} pts</div></div>
    <div class="btns"><button class="opt si" data-i="${i}" data-v="si">Cumple</button><button class="opt no" data-i="${i}" data-v="no">No cumple</button></div>
-   <div class="foto"><label class="b">📷 Foto<input type="file" accept="image/*" capture="environment" data-foto="${i}"></label><span id="fw${i}"></span></div>
    <textarea data-obs="${i}" placeholder="Observación (opcional)"></textarea>
   </div>`;
 });
@@ -354,13 +368,17 @@ function comprimir(file){
 }
 
 /* Puntaje */
-function puntaje(){return state.reduce((s,x,i)=>s+(x.v==="si"?ITEMS[i].w:0),0)}
+function puntajeSec(sec){return state.reduce((t,x,i)=>t+(ITEMS[i].sec===sec&&x.v==="si"?ITEMS[i].w:0),0)}
+const puntajePV=()=>puntajeSec("pv"),puntajeBK=()=>puntajeSec("back");
+function puntaje(){return puntajePV()}
 function nivel(p){return p>=90?{c:"var(--ok)",rgb:[31,138,76],t:"Excelente"}:p>=75?{c:"var(--warn)",rgb:[224,161,0],t:"Aceptable, con ajustes"}:{c:"var(--bad)",rgb:[200,16,46],t:"Crítico, requiere plan de acción"}}
 function calc(){
-  const p=puntaje(),rev=state.filter(x=>x.v).length,n=nivel(p);
-  $("pts").textContent=p;$("fill").style.width=p+"%";
-  $("fill").style.background=rev?n.c:"var(--ok)";$("light").style.background=rev?n.c:"#555";
-  $("lbl").textContent=(rev?n.t:"Sin evaluar")+` · ${rev} de 10 puntos revisados`;
+  const rev=state.filter(x=>x.v).length;
+  [["pv","PV"],["back","BK"]].forEach(([sec,id])=>{
+    const p=puntajeSec(sec),revS=state.filter((x,i)=>x.v&&ITEMS[i].sec===sec).length,n=nivel(p);
+    $("pts"+id).textContent=p;$("fill"+id).style.width=p+"%";$("fill"+id).style.background=revS?n.c:"#7f8aa0";
+  });
+  $("lbl").textContent=`${rev} de ${ITEMS.length} puntos revisados`;
 }
 
 /* Firmas */
@@ -435,17 +453,19 @@ async function _mostrarYGenerar(){
 
 const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function vistaPrevia(){
-  const p=puntaje(),n=nivel(p),cumple=state.filter(x=>x.v==="si").length;
+  const bloque=(sec,lab)=>{const p=puntajeSec(sec),n=nivel(p),tot=ITEMS.filter(i=>i.sec===sec).length,ok=state.filter((x,i)=>ITEMS[i].sec===sec&&x.v==="si").length;
+    return `<div class="rp-score" style="background:${n.c}"><div class="lab">${lab}</div><div class="big">${p}<small>/100</small></div><div class="txt">${n.t}<div class="sub">${ok} de ${tot} cumplen</div></div></div>`;};
   let h=`<div><div class="rp-head"><img class="rp-logo" src="${LOGO}" alt="Megatiendas"><h3>Reporte de Inspección de Carnes</h3><div class="meta">
     <span><b>Tienda:</b> ${esc(tiendaNombre())}</span><span><b>Regional:</b> ${esc($("regional").value)}</span><span><b>Fecha:</b> ${$("fecha").value} ${$("hora").value}</span>
     <span><b>Admin:</b> ${esc($("admin").value.trim())}</span><span><b>Auditor:</b> ${esc($("auditor").value.trim())}</span></div></div>
-    <div class="rp-score" style="background:${n.c}"><div class="big">${p}<small>/100</small></div>
-    <div class="txt">${n.t}<div class="sub">${cumple} de 10 puntos cumplen</div></div></div></div>`;
+    <div class="rp-dos">${bloque("pv","Punto de venta")}${bloque("back","Back")}</div></div>`;
+  let secPrev="";
   state.forEach((s,i)=>{
     const it=ITEMS[i],ok=s.v==="si";
-    h+=`<div class="rp-it"><div class="row"><div class="n cond" style="font-weight:800;font-size:22px;color:var(--rojo);min-width:22px">${i+1}</div>
+    if(it.sec!==secPrev){h+=`<div class="rp-sec">${it.z}</div>`;secPrev=it.sec;}
+    h+=`<div class="rp-it"><div class="row"><div class="n cond" style="font-weight:800;font-size:22px;color:var(--rojo);min-width:22px">${it.n}</div>
       <div style="font-weight:600">${it.t}</div><span class="tag" style="background:${ok?"var(--ok)":"var(--bad)"}">${ok?`✓ ${it.w}/${it.w}`:`✗ 0/${it.w}`}</span></div>
-      ${s.obs?`<div class="obs">${esc(s.obs)}</div>`:""}${s.foto?`<img src="${s.foto}" alt="Foto punto ${i+1}">`:""}</div>`;
+      ${s.obs?`<div class="obs">${esc(s.obs)}</div>`:""}</div>`;
   });
   const g=$("general").value.trim();
   if(g)h+=`<div class="rp-it"><div class="row"><b>Observación general</b></div><div class="obs">${esc(g)}</div></div>`;
@@ -467,7 +487,7 @@ const dbDel=id=>dbOp("readwrite",st=>st.delete(id));
 
 async function guardarLocal(){
   if(!currentId)currentId=Date.now().toString();
-  const rec={id:currentId,guardado:new Date().toISOString(),puntaje:puntaje(),
+  const rec={id:currentId,guardado:new Date().toISOString(),version:2,puntaje:puntajePV(),puntajeBack:puntajeBK(),
     regional:$("regional").value,tiendaSel:$("tienda").value,tiendaOtra:$("tiendaOtra").value,tienda:tiendaNombre(),
     fecha:$("fecha").value,hora:$("hora").value,admin:$("admin").value.trim(),auditor:$("auditor").value.trim(),
     general:$("general").value,items:state.map(x=>({...x})),firmaAud:pads.sigAud.img(),firmaAdm:pads.sigAdm.img()};
@@ -480,7 +500,6 @@ function pintarItem(i){
   card.classList.remove("si","no");if(s.v)card.classList.add(s.v);
   card.querySelectorAll(".opt").forEach(x=>x.classList.toggle("on",x.dataset.v===s.v));
   card.querySelector("textarea").value=s.obs||"";
-  $("fw"+i).innerHTML=s.foto?`<img src="${s.foto}" alt="Foto punto ${i+1}"><button class="x" data-i="${i}">Quitar</button>`:"";
 }
 async function cargar(rec){
   currentId=rec.id;
@@ -499,9 +518,9 @@ async function cargar(rec){
 async function abrirHist(){
   let a=[];try{a=await dbAll();}catch(e){}
   a.sort((x,y)=>y.guardado.localeCompare(x.guardado));
-  $("histList").innerHTML=a.length?a.map(r=>`<div class="hrow"><div class="sc" style="background:${nivel(r.puntaje).c}">${r.puntaje}</div>
+  $("histList").innerHTML=a.length?a.map(r=>`<div class="hrow">${r.version===2?`<div class="sc" style="background:${nivel(Math.min(r.puntaje,r.puntajeBack)).c}"><small>PV</small>${r.puntaje}<small>Back</small>${r.puntajeBack}</div>`:`<div class="sc" style="background:${nivel(r.puntaje).c}">${r.puntaje}</div>`}
     <div class="info"><b>${esc(r.tienda)}</b><br>${esc(r.regional||"")}<br>${r.fecha} ${r.hora}<br>Admin: ${esc(r.admin)}</div>
-    <div class="acts"><button class="ver" data-ver="${r.id}">Ver y PDF</button><button class="link" data-del="${r.id}">Borrar</button></div></div>`).join("")
+    <div class="acts">${r.version===2?`<button class="ver" data-ver="${r.id}">Ver y PDF</button>`:`<span class="hint">Formato anterior</span>`}<button class="link" data-del="${r.id}">Borrar</button></div></div>`).join("")
     :`<div class="vacio">Aún no hay reportes guardados. Cuando guardes una inspección, aparecerá aquí.</div>`;
   $("hist").classList.add("open");document.body.style.overflow="hidden";
 }
@@ -559,7 +578,7 @@ $("btnShare").addEventListener("click",()=>{
 $("btnVer").addEventListener("click",()=>{if(pdfBlob)window.open(URL.createObjectURL(pdfBlob),"_blank");});
 
 
-function resumen(){const p=puntaje();return `*Reporte de Inspección de Carnes*\nTienda: ${tiendaNombre()}\nFecha: ${$("fecha").value}\nPuntaje: ${p}/100 (${nivel(p).t})\nAdministrador: ${$("admin").value.trim()}\nAuditor: ${$("auditor").value.trim()}\n\nAdjunto el PDF con el detalle y la evidencia.`}
+function resumen(){const pv=puntajePV(),bk=puntajeBK();return `*Reporte de Inspección de Carnes*\nTienda: ${tiendaNombre()}\nFecha: ${$("fecha").value}\nPunto de venta: ${pv}/100 (${nivel(pv).t})\nBack: ${bk}/100 (${nivel(bk).t})\nAdministrador: ${$("admin").value.trim()}\nAuditor: ${$("auditor").value.trim()}`}
 
 
 $("btnReset").addEventListener("click",()=>{if(confirm("¿Borrar todo y empezar una inspección nueva?"))location.reload()});

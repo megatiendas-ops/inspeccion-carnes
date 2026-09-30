@@ -414,7 +414,7 @@ async function construirPDF(){
   }
   const n=doc.getNumberOfPages();
   for(let i=1;i<=n;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(120);doc.text(`Página ${i} de ${n}`,W-M,H-4,{align:"right"});}
-  pdfName=`Inspeccion_Carnes_${tiendaNombre().replace(/\s+/g,"_")}_${$("fecha").value}.pdf`;
+  pdfName=`Inspeccion_Carnes_${norm(tiendaNombre()).replace(/[^A-Z0-9]+/g,"_").replace(/^_|_$/g,"")}_${$("fecha").value}.pdf`;
   pdfBlob=doc.output("blob");
 }
 
@@ -535,21 +535,24 @@ async function bajarPDF(){
   $("msg2").style.color="var(--ok)";$("msg2").textContent="PDF descargado. Lo encuentras en Descargas o en Archivos.";
 }
 $("btnDown").addEventListener("click",bajarPDF);
-function respaldoDescarga(){
-  const a=document.createElement("a");a.href=URL.createObjectURL(pdfBlob);a.download=pdfName;document.body.appendChild(a);a.click();a.remove();
+const esIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+function respaldo(){
   $("msg2").style.color="";
-  $("msg2").textContent="Este navegador no deja enviar directo, así que el PDF se descargó. En WhatsApp toca 📎 → Documento y elígelo. Para enviar directo, abre el link del reporte en Safari o Chrome.";
+  if(esIOS){
+    window.open(URL.createObjectURL(pdfBlob),"_blank");
+    $("msg2").textContent="Se abrió el PDF. Toca el botón de compartir (cuadro con flecha ↑), elige WhatsApp y el contacto.";
+  }else{
+    const a=document.createElement("a");a.href=URL.createObjectURL(pdfBlob);a.download=pdfName;document.body.appendChild(a);a.click();a.remove();
+    $("msg2").textContent="Este navegador no deja enviar directo, así que el PDF se descargó. En WhatsApp toca 📎 → Documento y elígelo.";
+  }
 }
 $("btnShare").addEventListener("click",()=>{
   if(!pdfBlob){$("msg2").style.color="";$("msg2").textContent="El PDF se está preparando. Toca de nuevo en unos segundos.";return}
   const file=new File([pdfBlob],pdfName,{type:"application/pdf"});
-  let puede=false;try{puede=!!(navigator.canShare&&navigator.canShare({files:[file]}));}catch(e){}
-  if(!puede){respaldoDescarga();return}
+  const datos={files:[file],title:pdfName};
+  if(!navigator.share||(navigator.canShare&&!navigator.canShare(datos))){respaldo();return}
   $("msg2").textContent="";
-  navigator.share({files:[file],title:pdfName,text:resumen()}).catch(e=>{
-    if(e&&e.name==="AbortError")return;
-    respaldoDescarga();
-  });
+  navigator.share(datos).catch(e=>{if(e&&e.name==="AbortError")return;respaldo();});
 });
 
 
